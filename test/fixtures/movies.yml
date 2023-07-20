@@ -1,0 +1,6 @@
+one:
+  id: 1
+  title: First Movie
+  genre: Action
+  rating: 2.5
+  available_copies: 2

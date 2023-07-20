@@ -1,6 +1,9 @@
 class MoviesController < ApplicationController
   def index
+    genre = params[:genre] || nil
     @movies = Movie.all
+
+    @movies = @movies.where(genre: genre) if genre
     render json: @movies
   end
 
@@ -20,25 +23,39 @@ class MoviesController < ApplicationController
     end
   end
 
-
-  def recommendations
-    favorite_movies = User.find(params[:user_id]).favorites
-    @recommendations = RecommendationEngine.new(favorite_movies).recommendations
-    render json: @recommendations
-  end
-
-  def user_rented_movies
-    @rented = User.find(params[:user_id]).rented
-    render json: @rented
-  end
-
   def rent
     user = User.find(params[:user_id])
     movie = Movie.find(params[:id])
-    movie.available_copies -= 1
-    movie.save
-    user.rented << movie
-    render json: movie
+    if movie.available_copies > 0
+      movie.available_copies -= 1
+      movie.save
+      user.rented << movie
+      render json: movie
+    else
+      render json: { error: "Movie is not available for rent.", status: 422 }, status: :unprocessable_entity  end
+    end
+  end
+
+  def return
+    user = User.find(params[:user_id])
+    movie = Movie.find(params[:id])
+    if user.rentals.include?(movie)
+      movie.available_copies.increment!(:available_copies)
+      movie.save
+      user.rentals.delete(movie)
+      render json: movie
+    else
+      render json: { error: "User doesn't have this movie rented.", status: 422 }, status: :unprocessable_entity  end
+    end
+  end
+
+  def best
+    availability = params[:availability] || false
+    @movies = Movie.all
+
+    @movies = @movies.where("available_copies > 0") if availability
+    @movies = @movies.order(rating: :desc).limit(10)
+    render json: @movies
   end
 
   private

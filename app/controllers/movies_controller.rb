@@ -32,20 +32,21 @@ class MoviesController < ApplicationController
       user.rented << movie
       render json: movie
     else
-      render json: { error: "Movie is not available for rent.", status: 422 }, status: :unprocessable_entity  end
+      render json: { error: "Movie is not available for rent.", status: 422 }, status: :unprocessable_entity
     end
   end
 
-  def return
+  def return_movie
     user = User.find(params[:user_id])
     movie = Movie.find(params[:id])
+
     if user.rentals.include?(movie)
       movie.available_copies.increment!(:available_copies)
       movie.save
       user.rentals.delete(movie)
       render json: movie
     else
-      render json: { error: "User doesn't have this movie rented.", status: 422 }, status: :unprocessable_entity  end
+      render json: { error: "User doesn't have this movie rented.", status: 422 }, status: :unprocessable_entity
     end
   end
 

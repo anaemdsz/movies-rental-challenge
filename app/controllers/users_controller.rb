@@ -35,6 +35,23 @@ class UsersController < ApplicationController
     @user.destroy
     redirect_to root_url, notice: "User was successfully destroyed."
   end
+  
+  def recommendations
+    favorite_movies = User.find(params[:id]).favorites
+    @recommendations = RecommendationEngine.new(favorite_movies).recommendations
+    render json: @recommendations
+  end
+
+  def watch_next
+    favorite_movies = User.find(params[:id]).favorites
+    @recommendations = RecommendationEngine.new(favorite_movies).watch_next
+    render json: @recommendations
+  end
+  
+  def rented_movies
+    @rented = User.find(params[:id]).rented
+    render json: @rented
+  end
 
   private
 

@@ -12,29 +12,21 @@ class MoviesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  # test "should create movie" do
-  #   assert_difference("Movie.count") do
-  #     post movies_url, params: { movie: {  } }, as: :json
-  #   end
+  test "should create movie" do
+    assert_difference("Movie.count") do
+      post movies_url, params: { movie: {
+        title: "Foo 2: Revenge of Bar",
+        genre: "Sci-fi",
+        rating: 4.5,
+        available_copies: 4
+      } }, as: :json
+    end
 
-  #   assert_response :created
-  # end
+    assert_response :created
+  end
 
-  # test "should show movie" do
-  #   get movie_url(@movie), as: :json
-  #   assert_response :success
-  # end
-
-  # test "should update movie" do
-  #   patch movie_url(@movie), params: { movie: {  } }, as: :json
-  #   assert_response :success
-  # end
-
-  # test "should destroy movie" do
-  #   assert_difference("Movie.count", -1) do
-  #     delete movie_url(@movie), as: :json
-  #   end
-
-  #   assert_response :no_content
-  # end
+  test "should show movie" do
+    get movie_url(@movie), as: :json
+    assert_response :success
+  end
 end

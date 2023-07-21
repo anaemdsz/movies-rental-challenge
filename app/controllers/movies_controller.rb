@@ -24,9 +24,15 @@ class MoviesController < ApplicationController
   end
 
   def rent
-    user = User.find(params[:user_id])
-    movie = Movie.find(params[:id])
-    if movie.available_copies > 0
+    user = User.find_by(id: params[:user_id])
+    movie = Movie.find_by(id: params[:id])
+    if user.nil?
+      render json: { error: "User not found.", status: 404 }, status: :not_found
+    elsif movie.nil?
+      render json: { error: "Movie not found.", status: 404 }, status: :not_found
+    elsif user.rented.include?(movie)
+      render json: { error: "User already rented this movie.", status: 422}, status: :unprocessable_entity
+    elsif movie.available_copies > 0 and 
       movie.available_copies -= 1
       movie.save
       user.rented << movie
@@ -37,13 +43,17 @@ class MoviesController < ApplicationController
   end
 
   def return_movie
-    user = User.find(params[:user_id])
-    movie = Movie.find(params[:id])
+    user = User.find_by(id: params[:user_id])
+    movie = Movie.find_by(id: params[:id])
 
-    if user.rentals.include?(movie)
-      movie.available_copies.increment!(:available_copies)
+    if user.nil?
+      render json: { error: "User not found.", status: 404 }, status: :not_found
+    elsif movie.nil?
+      render json: { error: "Movie not found.", status: 404 }, status: :not_found
+    elsif user.rentals.find_by(movie_id: movie.id).present?
+      movie.available_copies += 1
       movie.save
-      user.rentals.delete(movie)
+      user.rentals.find_by(movie_id: movie.id).destroy
       render json: movie
     else
       render json: { error: "User doesn't have this movie rented.", status: 422 }, status: :unprocessable_entity

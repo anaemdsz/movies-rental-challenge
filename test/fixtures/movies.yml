@@ -1,6 +1,21 @@
-one:
+standard:
   id: 1
   title: First Movie
   genre: Action
   rating: 2.5
-  available_copies: 2
+  available_copies: 200
+
+movie_with_no_copies:
+  id: 2
+  title: Second Movie
+  genre: Action
+  rating: 10
+  available_copies: 0
+
+movie_jon_has:
+  id: 3
+  title: Garfield
+  genre: Comedy
+  rating: 8
+  available_copies: 1
+  

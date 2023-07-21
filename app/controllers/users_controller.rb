@@ -12,7 +12,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
-    if @user.save
+    if @user.save!
       response.headers['Location'] = user_url(@user)
       render json: { message: "User was successfully created." }, status: :created
     else
@@ -28,11 +28,11 @@ class UsersController < ApplicationController
 
     @user.rentals.each do |rental|
       rental.movie.increment!(:available_copies)
-      rental.destroy
+      rental.destroy!
     end
 
     # Destroy user
-    @user.destroy
+    @user.destroy!
     redirect_to root_url, notice: "User was successfully destroyed."
   end
   

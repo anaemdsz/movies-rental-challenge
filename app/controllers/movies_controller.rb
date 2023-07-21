@@ -32,7 +32,7 @@ class MoviesController < ApplicationController
       render json: { error: "Movie not found.", status: 404 }, status: :not_found
     elsif user.rented.include?(movie)
       render json: { error: "User already rented this movie.", status: 422}, status: :unprocessable_entity
-    elsif movie.available_copies > 0 and 
+    elsif movie.available_copies > 0
       movie.available_copies -= 1
       movie.save
       user.rented << movie

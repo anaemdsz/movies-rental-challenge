@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   root "movies#index"
 
   resources :movies, except: %i[new update destroy] do
-    get :rent, on: :member
+    post :rent, on: :member
     post :return_movie, on: :member
     get :best, on: :collection
   end
